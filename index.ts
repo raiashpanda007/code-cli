@@ -1,6 +1,11 @@
 import { program } from 'commander';
 import chalk from 'chalk';
 import { askQuestion } from './src/prompts';
+import { InitJob } from './src/utils/initJob';
+import { MatchSkills } from './src/utils/SkillMatcher';
+
+
+
 
 async function main() {
     console.clear();
@@ -13,14 +18,20 @@ async function main() {
         .description('A basic CLI with chalk and a nice UI');
 
     try {
-        const name = await askQuestion('What is your name?');
-        console.log(chalk.green(`\nHello, ${chalk.bold(name)}! let's get started.\n`));
+
+        const embeddings = await InitJob();
 
         const task = await askQuestion('What task would you like to do?');
 
         console.log(chalk.dim('-----------------------------------'));
         console.log(chalk.green(`✔ You entered: ${chalk.bold(task)}`));
         console.log(chalk.dim('-----------------------------------'));
+
+        const matchedSkills = await MatchSkills(task, embeddings);
+        console.log(chalk.green(`✔ Matched Skills: ${chalk.bold(matchedSkills.skills.map(skill => skill.skill).join(', '))}`));
+        console.log(chalk.dim('-----------------------------------'));
+
+
 
     } catch (error) {
         console.error(chalk.red('\nAn error occurred:'), error);
