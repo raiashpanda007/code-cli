@@ -38,27 +38,19 @@ export async function MatchSkills(query: string, embeddings: Record<string, numb
     });
     const sortedSimilarities = similarities.sort((a, b) => b.similarity - a.similarity);
 
-    if (sortedSimilarities.length === 0) {
-        return {
-            skills: sortedSimilarities,
-            userQuery: query,
-            similarity: 0
-        }
-    }
-
     const bestMatch = sortedSimilarities[0];
 
-    if (bestMatch && bestMatch.similarity <= 0.5) {
+    if (bestMatch && bestMatch.similarity > 0.7) {
         return {
-            skills: sortedSimilarities,
+            skills: [bestMatch],
             userQuery: query,
             similarity: bestMatch.similarity
         }
     } else {
         return {
-            skills: sortedSimilarities.slice(0, 5),
+            skills: [],
             userQuery: query,
-            similarity: sortedSimilarities[0]?.similarity || 0
+            similarity: bestMatch ? bestMatch.similarity : 0
         }
     }
 }

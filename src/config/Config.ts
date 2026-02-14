@@ -4,7 +4,8 @@ import { z as zod } from "zod";
 dotenvConfig();
 
 const EnvSchema = zod.object({
-    GEMINI_API_KEY: zod.string().min(1)
+    GEMINI_API_KEY: zod.string().min(1),
+    OPENROUTER_API_KEY: zod.string().min(1)
 });
 
 class Config {
