@@ -42,20 +42,6 @@ export const GetAllSkills = () => {
     return skills;
 };
 
-export const GetSkill = (skillName: string) => {
-    const skillFilePath = path.join(SKILLS_DIR, skillName, "SKILL.md");
-    if (!fs.existsSync(skillFilePath)) return null;
-    const content = fs.readFileSync(skillFilePath, "utf-8");
-    const lines = content.split("\n").filter(line => line.trim() !== "");
-    if (lines.length > 0) {
-        return {
-            name: lines[0]!.replace(/^#+\s*/, "").trim(),
-            description: lines.slice(1).join(" ").trim()
-        };
-    }
-    return null;
-};
-
 export const GetSkillContent = (skillName: string) => {
 
 

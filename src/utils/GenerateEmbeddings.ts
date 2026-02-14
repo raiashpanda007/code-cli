@@ -30,7 +30,7 @@ export const GenerateSkillEmbeddings = async (skills: { name: string; descriptio
     const embeddingsMap: Record<string, number[]> = {};
 
     try {
-        const descriptions = skills.map(skill => skill.description);
+        const descriptions = skills.map(skill => `${skill.name}: ${skill.description}`);
         const embeddings = await GeminiEmbeddings.embedDocuments(descriptions);
 
         skills.forEach((skill, i) => {

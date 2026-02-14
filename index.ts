@@ -5,6 +5,12 @@ import { InitJob } from './src/utils/initJob';
 import { MatchSkills } from './src/utils/SkillMatcher';
 import { GetSkillContent } from './src/utils/SkillsReader';
 import LLMCall from './src/LLM/LlmCall';
+import { marked } from 'marked';
+import TerminalRenderer from 'marked-terminal';
+
+marked.setOptions({
+    renderer: new TerminalRenderer() as any
+});
 
 
 async function main() {
@@ -40,7 +46,7 @@ async function main() {
                 const llmOutput: any = await LLMCall(skillContent, task);
                 console.log(chalk.green('LLM Output:'));
                 if (llmOutput.choices && llmOutput.choices.length > 0 && llmOutput.choices[0].message) {
-                    console.log(llmOutput.choices[0].message.content);
+                    console.log(marked(llmOutput.choices[0].message.content));
                 } else {
                     console.log(chalk.red('Failed to get a valid response from LLM.'));
                     console.log(JSON.stringify(llmOutput, null, 2));

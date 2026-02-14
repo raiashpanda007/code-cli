@@ -18,11 +18,7 @@ async function LLMCall(skillContent: string, userPrompt: string) {
             messages: [
                 {
                     role: "system",
-                    content: `You are a helpful assistant. The user has selected a skill. Here is the full description and instructions for that skill:
-                    
-${skillContent}
-
-Please generate a response that utilizes this skill. Your output will be shown in the terminal.`
+                    content: skillContent
                 },
                 {
                     role: "user",

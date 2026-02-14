@@ -1,6 +1,6 @@
 ---
 name: pptx-tool
-description: Read, generate, and adjust slides, layouts, templates.
+description: Read, generate, and adjust slides, layouts, template and presentations.
 ---
 
 # PPTX Tool
