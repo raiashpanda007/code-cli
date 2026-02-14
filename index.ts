@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import { askQuestion } from './src/prompts';
 import { InitJob } from './src/utils/initJob';
 import { MatchSkills } from './src/utils/SkillMatcher';
+import { GetSkillContent } from './src/utils/SkillsReader';
 import LLMCall from './src/LLM/LlmCall';
 
 
@@ -35,7 +36,8 @@ async function main() {
                 console.log(chalk.dim('-----------------------------------'));
 
                 console.log(chalk.blue('Calling LLM...'));
-                const llmOutput: any = await LLMCall(bestSkill, task);
+                const skillContent = GetSkillContent(bestSkill) || `Selected Skill: ${bestSkill}`;
+                const llmOutput: any = await LLMCall(skillContent, task);
                 console.log(chalk.green('LLM Output:'));
                 if (llmOutput.choices && llmOutput.choices.length > 0 && llmOutput.choices[0].message) {
                     console.log(llmOutput.choices[0].message.content);
