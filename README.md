@@ -89,3 +89,23 @@ You can extend the CLI's capabilities by adding new skills.
     ```
 
 The CLI will automatically pick up this new skill on the next run!
+
+### Adding Scripts to Skills
+
+You can make skills executable by adding a `scripts/` directory within the skill's folder. Any script inside this directory will be automatically executed when the skill is selected, **before** the LLM is called.
+
+**Supported languages:**
+- `.sh` (Shell scripts) - Made executable automatically
+- `.js` (Node.js)
+- `.ts` (Bun)
+- `.py` (Python 3)
+
+**Example Structure:**
+```
+skills/
+  my-skill/
+    SKILL.md
+    scripts/
+      setup.sh
+      run.ts
+```

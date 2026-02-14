@@ -48,13 +48,14 @@ async function main() {
                 if (skillPath) {
                     const scriptsPath = path.join(skillPath, 'scripts');
                     if (fs.existsSync(scriptsPath) && fs.lstatSync(scriptsPath).isDirectory()) {
-                        console.log(chalk.yellow(`Found scripts in ${bestSkill}, executing...`));
                         const files = fs.readdirSync(scriptsPath);
-                        for (const file of files) {
-                            const filePath = path.join(scriptsPath, file);
-                            const ext = path.extname(file);
+                        const executableFiles = files.filter(file => ['.sh', '.js', '.ts', '.py'].includes(path.extname(file)));
 
-                            if (['.sh', '.js', '.ts', '.py'].includes(ext)) {
+                        if (executableFiles.length > 0) {
+                            console.log(chalk.yellow(`Found scripts in ${bestSkill}, executing...`));
+                            for (const file of executableFiles) {
+                                const filePath = path.join(scriptsPath, file);
+                                const ext = path.extname(file);
                                 console.log(chalk.cyan(`> Executing ${file}...`));
                                 try {
                                     let command = '';
@@ -75,8 +76,8 @@ async function main() {
                                     console.error(chalk.red(`Error executing ${file}:`), err.message);
                                 }
                             }
+                            console.log(chalk.dim('-----------------------------------'));
                         }
-                        console.log(chalk.dim('-----------------------------------'));
                     }
                 }
 
