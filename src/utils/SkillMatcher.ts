@@ -40,7 +40,7 @@ export async function MatchSkills(query: string, embeddings: Record<string, numb
 
     const bestMatch = sortedSimilarities[0];
 
-    if (bestMatch && bestMatch.similarity > 0.7) {
+    if (bestMatch && bestMatch.similarity > 0.6) {
         return {
             skills: [bestMatch],
             userQuery: query,
