@@ -3,7 +3,10 @@ import chalk from 'chalk';
 import { askQuestion } from './src/prompts';
 import { InitJob } from './src/utils/initJob';
 import { MatchSkills } from './src/utils/SkillMatcher';
-import { GetSkillContent } from './src/utils/SkillsReader';
+import { GetSkillContent, GetSkillPath } from './src/utils/SkillsReader';
+import fs from 'fs';
+import path from 'path';
+import { execSync } from 'child_process';
 import LLMCall from './src/LLM/LlmCall';
 import { marked } from 'marked';
 import TerminalRenderer from 'marked-terminal';
@@ -40,6 +43,42 @@ async function main() {
                 const bestSkill = matchedSkills.skills[0]!.skill;
                 console.log(chalk.green(`✔ Matched Skill: ${chalk.bold(bestSkill)}`));
                 console.log(chalk.dim('-----------------------------------'));
+
+                const skillPath = GetSkillPath(bestSkill);
+                if (skillPath) {
+                    const scriptsPath = path.join(skillPath, 'scripts');
+                    if (fs.existsSync(scriptsPath) && fs.lstatSync(scriptsPath).isDirectory()) {
+                        console.log(chalk.yellow(`Found scripts in ${bestSkill}, executing...`));
+                        const files = fs.readdirSync(scriptsPath);
+                        for (const file of files) {
+                            const filePath = path.join(scriptsPath, file);
+                            const ext = path.extname(file);
+
+                            if (['.sh', '.js', '.ts', '.py'].includes(ext)) {
+                                console.log(chalk.cyan(`> Executing ${file}...`));
+                                try {
+                                    let command = '';
+                                    if (ext === '.js') command = `node "${filePath}"`;
+                                    else if (ext === '.ts') command = `bun run "${filePath}"`;
+                                    else if (ext === '.py') command = `python3 "${filePath}"`;
+                                    else if (ext === '.sh') {
+                                        try {
+                                            execSync(`chmod +x "${filePath}"`);
+                                        } catch (e) { /* ignore chmod error on windows/etc */ }
+                                        command = `"${filePath}"`;
+                                    }
+
+                                    if (command) {
+                                        execSync(command, { encoding: 'utf-8', stdio: 'inherit' });
+                                    }
+                                } catch (err: any) {
+                                    console.error(chalk.red(`Error executing ${file}:`), err.message);
+                                }
+                            }
+                        }
+                        console.log(chalk.dim('-----------------------------------'));
+                    }
+                }
 
                 console.log(chalk.blue('Calling LLM...'));
                 const skillContent = GetSkillContent(bestSkill) || `Selected Skill: ${bestSkill}`;

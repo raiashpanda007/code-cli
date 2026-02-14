@@ -75,3 +75,37 @@ export const GetSkillContent = (skillName: string) => {
     }
     return null;
 };
+
+export const GetSkillPath = (skillName: string): string | null => {
+    if (!fs.existsSync(SKILLS_DIR)) return null;
+
+    const validDirs = fs.readdirSync(SKILLS_DIR);
+    for (const dir of validDirs) {
+        const skillDirPath = path.join(SKILLS_DIR, dir);
+        const skillFilePath = path.join(skillDirPath, "SKILL.md");
+
+        if (fs.existsSync(skillFilePath)) {
+            const content = fs.readFileSync(skillFilePath, "utf-8");
+
+            // Check frontmatter
+            const match = content.match(/^---\s*\n([\s\S]*?)\n---\s*\n/);
+            if (match && match[1]) {
+                const frontmatter = match[1];
+                const nameMatch = frontmatter.match(/name:\s*(.+)/);
+                if (nameMatch && nameMatch[1]?.trim() === skillName) {
+                    return skillDirPath; // Return the directory path properly
+                }
+            }
+
+            // Fallback check
+            const lines = content.split("\n").filter(line => line.trim() !== "");
+            if (lines.length > 0) {
+                const name = lines[0]?.replace(/^#+\s*/, "").trim();
+                if (name === skillName) {
+                    return skillDirPath;
+                }
+            }
+        }
+    }
+    return null;
+};
